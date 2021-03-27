@@ -1,9 +1,9 @@
 package com.service.stocksearchanddisplayservice.client;
 
+import static com.service.stocksearchanddisplayservice.Constants.API_KEY;
 import static com.service.stocksearchanddisplayservice.Constants.CLIENT_URI;
 import static com.service.stocksearchanddisplayservice.Constants.FINANCIAL_DATA_CLIENT_NAME;
 import static com.service.stocksearchanddisplayservice.Constants.FINANCIAL_DATA_CLIENT_URI;
-import static com.service.stocksearchanddisplayservice.Constants.API_KEY;
 import static com.service.stocksearchanddisplayservice.Constants.PATH_VARIABLE_SYMBOL;
 
 import java.util.List;
