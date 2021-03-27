@@ -33,7 +33,7 @@ public class StockSearchandDisplayController {
     private GetFiancialDataService getFiancialDataService;
 
     @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin("http://localhost:8080","http://localhost:8081",,"http://localhost:3000",,"http://localhost:5000")
+    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
     @GetMapping(value = "/getsymbols")
     public ResponseEntity<Iterable<StocksData>> getStockSymbols() throws Exception {
         // if (mainHeader != "") {
@@ -46,7 +46,7 @@ public class StockSearchandDisplayController {
     }
 
     @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin("http://localhost:8080","http://localhost:8081",,"http://localhost:3000",,"http://localhost:5000")
+    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
     @GetMapping(value = "/getsimualtedprice")
     public ResponseEntity<SimulatedPrice> getSimulatedPrice(@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
         // if (mainHeader != "") {
@@ -59,7 +59,7 @@ public class StockSearchandDisplayController {
     }
 
     @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin("http://localhost:8080","http://localhost:8081",,"http://localhost:3000",,"http://localhost:5000")
+    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
     @GetMapping(value = "/getfinancialdata")
     public ResponseEntity<List<FinancialData>> getfinancialdata(@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
         // if (mainHeader != "") {
