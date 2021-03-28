@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SimulatedPrice implements Serializable {
-    private String symbol;
-    private String price;
+public class SimulatedPrice implements Serializable 
+{
+	private String symbol;
+	private String price;
 }

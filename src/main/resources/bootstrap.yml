@@ -1,0 +1,4 @@
+#Config to diasble the SSL Validation for Feign calls
+feign:
+  httpclient:
+    disableSslValidation: true

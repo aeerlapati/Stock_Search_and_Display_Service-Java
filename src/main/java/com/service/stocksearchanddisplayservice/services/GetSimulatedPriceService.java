@@ -1,121 +1,130 @@
 package com.service.stocksearchanddisplayservice.services;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
+import org.codehaus.plexus.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.service.stocksearchanddisplayservice.client.GetSimulatedPriceClient;
 import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
 import com.service.stocksearchanddisplayservice.models.StocksData;
 import com.service.stocksearchanddisplayservice.repository.StocksRepository;
+import com.service.stocksearchanddisplayservice.util.LogMarker;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import antlr.StringUtils;
+import feign.RetryableException;
 
 @Service
-public class GetSimulatedPriceService {
+public class GetSimulatedPriceService 
+{
     
+	private static final Logger log = LoggerFactory.getLogger(GetSimulatedPriceService.class);
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	
     @Autowired
     private GetSimulatedPriceClient getSimulatedPriceClient;
-
+    
     @Autowired
     private StocksRepository stocksRepository;
 
-
-    @SuppressWarnings("unchecked")
-    public ResponseEntity<SimulatedPrice> getSimulatedPrices(String symbol) {
+    public ResponseEntity<SimulatedPrice> getSimulatedPrices(String symbol) 
+    {
        	        
-        //ResponeEntity<SimulatedPrice> simulatedPrice = new SimulatedPrice();
-        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceClient
-                .getSimulatedPrice("fbd082f1d430-abhinav", symbol);
+        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", symbol);
       
         return simulatedPrice;
     }
-
-
-    @SuppressWarnings("unchecked")
-    public void updateSimulatedPrices() throws InterruptedException, Exception {
+    
+    public void updateSimulatedPrices() throws InterruptedException, Exception 
+    {
+    	log.info(LogMarker.SERVICE_ENTRY.getMarker(), "updateSimulatedPrices: call started at time: {}",  dateFormat.format(new Date()));
+    	log.info("The time is now {}", dateFormat.format(new Date()));
         StocksData stocksInDB = new StocksData();
-        //ResponseEntity<SimulatedPrice> simulatedPriceResponse = null;
         int counter = -1;
-        try{
+        try
+        {
             
             List<StocksData> noPricesStocksList = stocksRepository.findByPrice("NA");
 
-            if(!noPricesStocksList.isEmpty() && noPricesStocksList.size() > 0){
-                    for(StocksData stockRecord:noPricesStocksList ){
-
-                      if(counter == 0)
-                      {
-                        Thread.sleep(30000);
-                        System.out.println("Reached limit");
-                      } 
-
-                        ResponseEntity<SimulatedPrice> simulatedPriceResponse = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", stockRecord.getStockSymbol());
-                        System.out.println(simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Limit"));
-                        System.out.println(simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));
-                        System.out.println("ended");
-                        counter = Integer.parseInt(simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));
-                        
-                        if(!Objects.isNull(simulatedPriceResponse.getBody())){
-
-                            stocksInDB.setId(stockRecord.getId());
-                            stocksInDB.setPrice(simulatedPriceResponse.getBody().getPrice());
-                            stocksInDB.setStockName(stockRecord.getStockName());
-                            stocksInDB.setStockSymbol(stockRecord.getStockSymbol());
-        
-                            Date date = new Date(0);
-                            Timestamp timestamp2 = new Timestamp(date.getTime());
-        
-                            stocksInDB.setPriceUpdatedTime(timestamp2);
-                            stocksRepository.save(stocksInDB);
-            
-                            stocksInDB = new StocksData();
-                            Thread.sleep(10000);
-                        }
-
-                    }
-            }else{
-
-                Iterable<StocksData> queryStocksList = stocksRepository.findAll();
-
-                    for(StocksData stockRecord:queryStocksList ){
-
-
-                        //if(stockRecord.getPrice() != null && !stockRecord.getPrice().isEmpty())
-                        
-                        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", stockRecord.getStockSymbol());
-                        
-                        if(!Objects.isNull(simulatedPrice.getBody())){
-                            stocksInDB.setId(stockRecord.getId());
-                            stocksInDB.setPrice(simulatedPrice.getBody().getPrice());
-                            stocksInDB.setStockName(stockRecord.getStockName());
-                            stocksInDB.setStockSymbol(stockRecord.getStockSymbol());
-
-                            Date date = new Date(0);
-                            Timestamp timestamp2 = new Timestamp(date.getTime());
-
-                            stocksInDB.setPriceUpdatedTime(timestamp2);
-                            stocksRepository.save(stocksInDB);
-            
-                            stocksInDB = new StocksData();
-                            Thread.sleep(10000);
-                        }
-                    }
+            if(!noPricesStocksList.isEmpty() && noPricesStocksList.size() > 0)
+            {
+            	log.info("Entered into IF logic where the prices of all stocks haven't updated for the first time");
+            	
+                    updateStockInfo(stocksInDB, counter, noPricesStocksList, false);
+                    log.info(LogMarker.SERVICE_EXIT.getMarker(), "updateSimulatedPrices: call ended at time: {}",  dateFormat.format(new Date()));
             }
-        }catch(Exception e){
-
-            System.out.println(e);
-        
+            else
+            {
+            	log.info("Entered into ELSE logic, where the prices of all stocks are refreshing");
+                Iterable<StocksData> queryStocksIterable = stocksRepository.findAll();
+                
+                List<StocksData>  stocksList = new ArrayList<>();
+                if(Objects.nonNull(queryStocksIterable))
+                {
+                	queryStocksIterable.forEach(stocksList::add);
+                    updateStockInfo(stocksInDB, counter, stocksList, true);
+                }	
+                log.info(LogMarker.SERVICE_EXIT.getMarker(), "updateSimulatedPrices: call ended");
+            }
         }
+        catch(Exception e)
+        {
+        	log.info(LogMarker.SERVICE_ERROR.getMarker(), "updateSimulatedPrices: call ended with exception : {}", e.getMessage());
+        	//RetryableException retryableException = (RetryableException)e;
+        	//System.out.println("Retry after value:" + retryableException..getFirst("Retry-After"));
+        	Thread.sleep(20000);
+        	//throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "Failed to refresh stock prices", LOCATION, ""), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        //simulatedPrice = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", symbol);
-      
     }
+
+	private void updateStockInfo(StocksData stocksInDB, int counter, List<StocksData> noPricesStocksList, boolean updateFlag)
+			throws InterruptedException 
+	{
+		for(StocksData stockRecord:noPricesStocksList )
+		{
+
+		  if(counter == 0)
+		  {
+			log.info("Sleep started at: {} ", dateFormat.format(new Date()));
+		    Thread.sleep(40000);
+		    log.info("Sleep ended at: {} ", dateFormat.format(new Date()));
+		  } 
+
+		    ResponseEntity<SimulatedPrice> simulatedPriceResponse = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", stockRecord.getStockSymbol());
+			
+		    log.info("Total attempts: {}, Remaining attempts: {} for getStockPrice API call", simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Limit"), simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));
+		    counter = Integer.parseInt(simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));
+		    
+		    if(!Objects.isNull(simulatedPriceResponse.getBody()))
+		    {
+
+		        stocksInDB.setId(stockRecord.getId());
+		        stocksInDB.setPrice(simulatedPriceResponse.getBody().getPrice());
+		        stocksInDB.setStockName(stockRecord.getStockName());
+		        stocksInDB.setStockSymbol(stockRecord.getStockSymbol());
+      
+		        stocksRepository.save(stocksInDB);
+		        
+		        if(updateFlag)
+		        {
+		        	log.info("price: {} for symbol: {} has been updated in db", stocksInDB.getPrice(), stocksInDB.getStockSymbol());
+		        }
+		        else
+		        {
+		        	log.info("price: {} for symbol: {} has been saved in db for first time", stocksInDB.getPrice(), stocksInDB.getStockSymbol());
+		        }	
+		        
+		        stocksInDB = new StocksData();
+		    }
+
+		}
+	}
+}

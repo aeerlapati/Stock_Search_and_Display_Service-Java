@@ -2,87 +2,92 @@ package com.service.stocksearchanddisplayservice.controllers;
 
 import java.util.List;
 
-import com.service.stocksearchanddisplayservice.models.FinancialData;
-import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
-import com.service.stocksearchanddisplayservice.models.StockSymbols;
-import com.service.stocksearchanddisplayservice.models.StocksData;
-import com.service.stocksearchanddisplayservice.services.GetFiancialDataService;
-import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceService;
-import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.service.stocksearchanddisplayservice.models.FinancialData;
+import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
+import com.service.stocksearchanddisplayservice.models.StocksData;
+import com.service.stocksearchanddisplayservice.services.GetFiancialDataService;
+import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceService;
+import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
+import com.service.stocksearchanddisplayservice.util.LogMarker;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-public class StockSearchandDisplayController {
+@RequestMapping("api/v1")
+public class StockSearchAndDisplayController {
 
-    @Autowired
-    private GetValidStockSymbolsService getValidStockSymbolsService;
+	private static final Logger log = LoggerFactory.getLogger(StockSearchAndDisplayController.class);
 
-    @Autowired
-    private GetSimulatedPriceService getSimulatedPriceService;
+	@Autowired
+	private GetValidStockSymbolsService getValidStockSymbolsService;
 
-    @Autowired
-    private GetFiancialDataService getFiancialDataService;
+	@Autowired
+	private GetSimulatedPriceService getSimulatedPriceService;
 
-    @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
-    @GetMapping(value = "/getsymbols")
-    public ResponseEntity<Iterable<StocksData>> getStockSymbols() throws Exception {
-        // if (mainHeader != "") {
-        //     throw new Exception("Invalid Header");
-        // }
-        Iterable<StocksData> response = getValidStockSymbolsService.getValidStockSymbols();
+	@Autowired
+	private GetFiancialDataService getFiancialDataService;
 
-        //log.info("ONLINE SUBMISSION Transaction Successful for "+patientCertification.getFlowName()+" flow");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	@ApiOperation(value = "", response = ResponseEntity.class)
+	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@GetMapping(value = "/getSymbols")
+	public ResponseEntity<Iterable<StocksData>> getStockSymbols() throws Exception {
+		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getStockSymbols: call started");
+		Iterable<StocksData> response = getValidStockSymbolsService.getValidStockSymbols();
+		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getStockSymbols: call ended");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
-    @GetMapping(value = "/getsimualtedprice")
-    public ResponseEntity<SimulatedPrice> getSimulatedPrice(@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
-        // if (mainHeader != "") {
-        //     throw new Exception("Invalid Header");
-        // }
-        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceService.getSimulatedPrices(stockSymbol);
+	@ApiOperation(value = "", response = ResponseEntity.class)
+	@CrossOrigin({ "http://localhost:8080", "http://localhost:8081", "http://localhost:3000", "http://localhost:5000" })
+	@GetMapping(value = "/getSimualtedPrice")
+	public ResponseEntity<SimulatedPrice> getSimulatedPrice(
+			@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
+		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getSimulatedPrice: call started");
+		ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceService.getSimulatedPrices(stockSymbol);
+		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getSimulatedPrice: call ended");
+		return new ResponseEntity<>(simulatedPrice.getBody(), HttpStatus.OK);
+	}
 
-        //log.info("ONLINE SUBMISSION Transaction Successful for "+patientCertification.getFlowName()+" flow");
-        return new ResponseEntity<>(simulatedPrice.getBody(), HttpStatus.OK);
-    }
+	@ApiOperation(value = "", response = ResponseEntity.class)
+	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@GetMapping(value = "/getFinancialData")
+	public ResponseEntity<List<FinancialData>> getFinancialData(
+			@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
+		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getFinancialData: call started for stock symbol: ",
+				stockSymbol);
+		List<FinancialData> financialData = getFiancialDataService.getFinancialData(stockSymbol);
+		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getFinancialData: call ended with financial data: {}",
+				financialData);
+		return new ResponseEntity<>(financialData, HttpStatus.OK);
+	}
 
-    @ApiOperation(value = "", response = ResponseEntity.class)
-    @CrossOrigin({"http://localhost:8080","http://localhost:8081","http://localhost:3000","http://localhost:5000"})
-    @GetMapping(value = "/getfinancialdata")
-    public ResponseEntity<List<FinancialData>> getfinancialdata(@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
-        // if (mainHeader != "") {
-        //     throw new Exception("Invalid Header");
-        // }
-       List<FinancialData> financialData = getFiancialDataService.getFinancialData(stockSymbol);
+	@ApiOperation(value = "", response = ResponseEntity.class)
+	@GetMapping(value = "/updateStockPrices")
+	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	public ResponseEntity<SimulatedPrice> updateStockPrices() throws Exception {
+		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "updateStockPrices: call started");
+		SimulatedPrice simulatedPrice = new SimulatedPrice();
+		getSimulatedPriceService.updateSimulatedPrices();
+		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "updateStockPrices: call ended");
+		return new ResponseEntity<>(simulatedPrice, HttpStatus.OK);
+	}
 
-        //log.info("ONLINE SUBMISSION Transaction Successful for "+patientCertification.getFlowName()+" flow");
-        return new ResponseEntity<>(financialData, HttpStatus.OK);
-    }
+	@ApiOperation(value = "", response = ResponseEntity.class)
+	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@GetMapping(value = "/")
+	public String defaultMethod() throws Exception {
+		return "Connection Successfull";
+	}
 
-    @ApiOperation(value = "", response = ResponseEntity.class)
-    @GetMapping(value = "/updateStockPrices")
-    public ResponseEntity<SimulatedPrice> updateStockPrices() throws Exception {
-        // if (mainHeader != "") {
-        //     throw new Exception("Invalid Header");
-        // }
-
-        SimulatedPrice simulatedPrice = new SimulatedPrice();
-       getSimulatedPriceService.updateSimulatedPrices();
-
-        //log.info("ONLINE SUBMISSION Transaction Successful for "+patientCertification.getFlowName()+" flow");
-        return new ResponseEntity<>(simulatedPrice, HttpStatus.OK);
-    }
-    
 }
