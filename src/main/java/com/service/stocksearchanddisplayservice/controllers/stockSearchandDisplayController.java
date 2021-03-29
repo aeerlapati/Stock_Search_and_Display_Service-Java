@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.service.stocksearchanddisplayservice.models.FinanceDataDBObject;
 import com.service.stocksearchanddisplayservice.models.FinancialData;
 import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
 import com.service.stocksearchanddisplayservice.models.StocksData;
@@ -39,7 +40,8 @@ public class StockSearchAndDisplayController {
 	private GetFiancialDataService getFiancialDataService;
 
 	@ApiOperation(value = "", response = ResponseEntity.class)
-	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com",
+			"https://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com" })
 	@GetMapping(value = "/getSymbols")
 	public ResponseEntity<Iterable<StocksData>> getStockSymbols() throws Exception {
 		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getStockSymbols: call started");
@@ -49,7 +51,8 @@ public class StockSearchAndDisplayController {
 	}
 
 	@ApiOperation(value = "", response = ResponseEntity.class)
-	@CrossOrigin({ "http://localhost:8080", "http://localhost:8081", "http://localhost:3000", "http://localhost:5000" })
+	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com",
+			"https://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com" })
 	@GetMapping(value = "/getSimualtedPrice")
 	public ResponseEntity<SimulatedPrice> getSimulatedPrice(
 			@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
@@ -60,13 +63,14 @@ public class StockSearchAndDisplayController {
 	}
 
 	@ApiOperation(value = "", response = ResponseEntity.class)
-	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com",
+			"https://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com" })
 	@GetMapping(value = "/getFinancialData")
-	public ResponseEntity<List<FinancialData>> getFinancialData(
+	public ResponseEntity<List<FinanceDataDBObject>> getFinancialData(
 			@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
 		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getFinancialData: call started for stock symbol: ",
 				stockSymbol);
-		List<FinancialData> financialData = getFiancialDataService.getFinancialData(stockSymbol);
+		List<FinanceDataDBObject> financialData = getFiancialDataService.getFinancialData(stockSymbol);
 		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getFinancialData: call ended with financial data: {}",
 				financialData);
 		return new ResponseEntity<>(financialData, HttpStatus.OK);
@@ -74,7 +78,7 @@ public class StockSearchAndDisplayController {
 
 	@ApiOperation(value = "", response = ResponseEntity.class)
 	@GetMapping(value = "/updateStockPrices")
-	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com", "https://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com"})
 	public ResponseEntity<SimulatedPrice> updateStockPrices() throws Exception {
 		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "updateStockPrices: call started");
 		SimulatedPrice simulatedPrice = new SimulatedPrice();
@@ -84,7 +88,7 @@ public class StockSearchAndDisplayController {
 	}
 
 	@ApiOperation(value = "", response = ResponseEntity.class)
-	@CrossOrigin({ "http://localhost:8081", "http://stockssearchanddisplay-env.eba-mgnrpgr7.us-west-1.elasticbeanstalk.com/" })
+	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com", "https://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com"})
 	@GetMapping(value = "/")
 	public String defaultMethod() throws Exception {
 		return "Connection Successfull";

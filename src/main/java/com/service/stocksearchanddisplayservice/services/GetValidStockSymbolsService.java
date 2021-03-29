@@ -4,6 +4,7 @@ import static com.service.stocksearchanddisplayservice.util.Constants.LOCATION;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,36 +38,23 @@ public class GetValidStockSymbolsService
     	log.info(LogMarker.SERVICE_ENTRY.getMarker(), "getValidStockSymbols: call started");
 
         List<StockSymbols> stockSymbolsResponse = new ArrayList<>();
+
         try
         {
             Iterable<StocksData> allStocks =  stocksRepository.findAll();
-            System.out.println(allStocks);
-            if(allStocks == null || Iterables.size(allStocks) == 0)
+            
+            if(Objects.nonNull(allStocks) && Iterables.size(allStocks) > 0)
             {
-                stockSymbolsResponse = getSymbolsClient.stockSymbolsClient("fbd082f1d430-abhinav");
-                StocksData stockData = new StocksData();
-    
-                for(StockSymbols stockrecord: stockSymbolsResponse)
-                {
-                    stockData.setStockName(stockrecord.getName());
-                    stockData.setStockSymbol(stockrecord.getSymbol());
-                    stockData.setPrice("NA");
-
-                    stocksRepository.save(stockData);
-        
-                    stockData = new StocksData();
-                }
-
-                 allStocks =  stocksRepository.findAll();
+               return allStocks;
+            }else{
+                throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "", "Stocks Information is currently unavailable, please try after some time", ""), HttpStatus.NOT_FOUND);
             }
-            log.info(LogMarker.SERVICE_EXIT.getMarker(), "getValidStockSymbols: call ended");
-            return allStocks;
 
         }
         catch(Exception e)
         {
         	log.info(LogMarker.SERVICE_ERROR.getMarker(), "getValidStockSymbols: call ended with error: {}", e.getMessage()); ;
-            throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "Unable to fetch stock symbols", LOCATION, ""), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "", "Stocks Information is currently unavailable, please try after some time", ""), HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

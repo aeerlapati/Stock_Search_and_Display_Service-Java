@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -21,29 +22,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "STOCKS")
-public class StocksData {
+@Table(name = "STOCKFINANCEDATA")
+public class FinanceDataDBObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer Id;
-    
-    @Column(name = "STOCK_NAME")
-    @JsonProperty("stockname")
-    String stockName;
-	
+    Integer Id;
+
     @Column(name = "STOCK_SYMBOL")
     @JsonProperty("stocksymbol")
-    String stockSymbol;
-	
-    @Column(name = "PRICE")
-    @JsonProperty("stockprice")
-    String price;
+    private String stocksymbol;
+
+    @Lob
+    @Column(name = "FINANCE_DATA_PAYLOAD")
+    private String financeInfoPayload;
 
     @Column(name = "PRICE_UPDATED_TIME")
     @JsonProperty("priceupdatedtime")
@@ -67,4 +63,5 @@ public class StocksData {
     	TimeZone.setDefault(TimeZone.getTimeZone("US/Arizona"));
     	return Calendar.getInstance(TimeZone.getTimeZone("US/Arizona")).getTime();
     }
+
 }
