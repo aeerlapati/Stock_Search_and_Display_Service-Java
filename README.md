@@ -1,4 +1,4 @@
-# stock_search_and_display_service
+# Stock_Search_and_Display_Service-Java
 
 This project consists of 2 applications:
   - [Stock Search and Display Backend Service - JAVA](Stock Search and Display UI - React)
