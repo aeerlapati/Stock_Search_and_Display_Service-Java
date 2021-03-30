@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FinancialData implements Serializable {
-    private String symbol;
+    private String stockSymbol;
     private String date;
     private String currency;
     private String revenue;
