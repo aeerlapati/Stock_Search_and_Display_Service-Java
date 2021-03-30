@@ -26,9 +26,9 @@ import com.service.stocksearchanddisplayservice.util.LogMarker;
 import com.service.stocksearchanddisplayservice.util.Utility;
 
 @Service
-public class GetFiancialDataService {
+public class GetFinancialDataService {
 
-	private static final Logger log = LoggerFactory.getLogger(GetFiancialDataService.class);
+	private static final Logger log = LoggerFactory.getLogger(GetFinancialDataService.class);
 
 	@Autowired
 	private GetFinancialDataClient getFinancialDataClient;

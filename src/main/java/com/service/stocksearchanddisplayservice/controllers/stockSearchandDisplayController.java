@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.service.stocksearchanddisplayservice.models.FinanceDataDBObject;
 import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
 import com.service.stocksearchanddisplayservice.models.StocksData;
-import com.service.stocksearchanddisplayservice.services.GetFiancialDataService;
+import com.service.stocksearchanddisplayservice.services.GetFinancialDataService;
 import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceService;
 import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
 import com.service.stocksearchanddisplayservice.util.LogMarker;
@@ -43,7 +43,7 @@ public class StockSearchAndDisplayController
 	private GetSimulatedPriceService getSimulatedPriceService;
 
 	@Autowired
-	private GetFiancialDataService getFiancialDataService;
+	private GetFinancialDataService getFiancialDataService;
 
 	@ApiOperation(value = "Get Stock Symbols Info", response = ResponseEntity.class)
 	@CrossOrigin({ "http://localhost:8081", "http://stocksearchanddisplay-react.s3-us-west-1.amazonaws.com",

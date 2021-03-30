@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Iterables;
 import com.service.stocksearchanddisplayservice.exception.ServiceException;
 import com.service.stocksearchanddisplayservice.models.StocksData;
-import com.service.stocksearchanddisplayservice.services.GetFiancialDataService;
+import com.service.stocksearchanddisplayservice.services.GetFinancialDataService;
 import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceService;
 import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
 
@@ -23,7 +23,7 @@ public class ScheduledTasks {
 	GetSimulatedPriceService getSimulatedPriceService;
 
 	@Autowired
-	GetFiancialDataService financialDataService;
+	GetFinancialDataService financialDataService;
 
 	boolean fetchFlag = true;
 

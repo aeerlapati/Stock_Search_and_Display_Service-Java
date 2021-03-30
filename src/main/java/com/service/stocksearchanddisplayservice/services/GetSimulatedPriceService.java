@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Iterables;
 import com.service.stocksearchanddisplayservice.client.GetSimulatedPriceClient;
 import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
 import com.service.stocksearchanddisplayservice.models.StocksData;
@@ -67,7 +68,7 @@ public class GetSimulatedPriceService
                 Iterable<StocksData> queryStocksIterable = stocksRepository.findAll();
                 
                 List<StocksData>  stocksList = new ArrayList<>();
-                if(Objects.nonNull(queryStocksIterable))
+                if(Objects.nonNull(queryStocksIterable) && Iterables.size(queryStocksIterable) > 0)
                 {
                 	queryStocksIterable.forEach(stocksList::add);
                 	Collections.sort(stocksList, (s1, s2) -> s1.getPriceUpdatedTime().compareTo(s2.getPriceUpdatedTime()));
