@@ -2,8 +2,8 @@
 
 This project consists of 2 applications:
   - [Stock Search and Display Backend Service - JAVA](Stock Search and Display UI - React)
-  - [Backend Service URL](https://github.com/aeerlapati/stock_search_and_display_service)
-  - [React URL](https://github.com/aeerlapati/StockSearchAndDisplayUI-React)
+  - [Java Code Repository](https://github.com/aeerlapati/stock_search_and_display_service)
+  - [React Repository](https://github.com/aeerlapati/StockSearchAndDisplayUI-React)
 
 This initially appeared on
 [gist](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2), but as
@@ -17,8 +17,6 @@ moved it here.
   - [How to run this applicatio in your local](#Running)
   - [Runing the tests](#running-the-tests)
   - [Deployment](#deployment)
-  - [Built With](#built-with)
-  - [Authors](#authors)
 
 ## Getting Started
 
