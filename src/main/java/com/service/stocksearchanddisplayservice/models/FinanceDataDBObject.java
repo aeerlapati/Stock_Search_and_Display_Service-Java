@@ -34,13 +34,16 @@ public class FinanceDataDBObject {
     Integer Id;
 
     @Column(name = "STOCK_SYMBOL")
-    @JsonProperty("stocksymbol")
-    private String stocksymbol;
+    @JsonProperty("stockSymbol")
+    private String stockSymbol;
 
     @Lob
     @Column(name = "FINANCE_DATA_PAYLOAD")
     private String financeInfoPayload;
 
+    @Column(name = "FINANCE_PAYLOAD_UPDATED")
+    private String financeInfoSavedFlag;
+    
     @Column(name = "PRICE_UPDATED_TIME")
     @JsonProperty("priceupdatedtime")
     @Temporal(TemporalType.TIMESTAMP)

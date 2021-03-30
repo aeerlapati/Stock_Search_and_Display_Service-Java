@@ -45,7 +45,7 @@ public class StockSearchAndDisplayController {
 	@GetMapping(value = "/getSymbols")
 	public ResponseEntity<Iterable<StocksData>> getStockSymbols() throws Exception {
 		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getStockSymbols: call started");
-		Iterable<StocksData> response = getValidStockSymbolsService.getValidStockSymbols();
+		Iterable<StocksData> response = getValidStockSymbolsService.getStockSymbolsFromDB();
 		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getStockSymbols: call ended");
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -70,7 +70,7 @@ public class StockSearchAndDisplayController {
 			@RequestParam(value = "stockSymbol", required = true) String stockSymbol) throws Exception {
 		log.info(LogMarker.CONTROLLER_ENTRY.getMarker(), "getFinancialData: call started for stock symbol: ",
 				stockSymbol);
-		List<FinanceDataDBObject> financialData = getFiancialDataService.getFinancialData(stockSymbol);
+		List<FinanceDataDBObject> financialData = getFiancialDataService.getFinancialDataFromDB(stockSymbol);
 		log.info(LogMarker.CONTROLLER_EXIT.getMarker(), "getFinancialData: call ended with financial data: {}",
 				financialData);
 		return new ResponseEntity<>(financialData, HttpStatus.OK);

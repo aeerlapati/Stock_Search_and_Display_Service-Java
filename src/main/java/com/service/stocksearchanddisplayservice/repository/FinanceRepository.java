@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FinanceRepository extends CrudRepository<FinanceDataDBObject, Integer> {
 
-    List<FinanceDataDBObject> findByStocksymbol(String stocksymbol);
+    List<FinanceDataDBObject> findByStockSymbol(String stockSymbol);
     
+    List<FinanceDataDBObject> findByFinanceInfoSavedFlag(String savedFlag);
 }

@@ -1,5 +1,6 @@
 package com.service.stocksearchanddisplayservice.util;
 
+import com.google.gson.Gson;
 import com.service.stocksearchanddisplayservice.models.ErrorResponse;
 
 public final class Utility 
@@ -14,6 +15,13 @@ public final class Utility
 		errorResponse.setLocation(location);
 		errorResponse.setMoreInfo(moreInfo);
 		return errorResponse;
+	}
+	
+	public static String convertObjectToJson(Object object)
+	{
+		Gson gson = new Gson();
+		String jsonInString = gson.toJson(object);
+		return jsonInString;
 	}
 	
 }

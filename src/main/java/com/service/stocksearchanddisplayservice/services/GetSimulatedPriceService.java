@@ -1,12 +1,13 @@
 package com.service.stocksearchanddisplayservice.services;
 
+import static com.service.stocksearchanddisplayservice.util.Constants.API_KEY;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.codehaus.plexus.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
 import com.service.stocksearchanddisplayservice.models.StocksData;
 import com.service.stocksearchanddisplayservice.repository.StocksRepository;
 import com.service.stocksearchanddisplayservice.util.LogMarker;
-
-import feign.RetryableException;
 
 @Service
 public class GetSimulatedPriceService 
@@ -38,7 +37,7 @@ public class GetSimulatedPriceService
     public ResponseEntity<SimulatedPrice> getSimulatedPrices(String symbol) 
     {
        	        
-        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", symbol);
+        ResponseEntity<SimulatedPrice> simulatedPrice = getSimulatedPriceClient.getSimulatedPrice(API_KEY, symbol);
       
         return simulatedPrice;
     }
@@ -98,7 +97,7 @@ public class GetSimulatedPriceService
 		    log.info("Sleep ended at: {} ", dateFormat.format(new Date()));
 		  } 
 
-		    ResponseEntity<SimulatedPrice> simulatedPriceResponse = getSimulatedPriceClient.getSimulatedPrice("fbd082f1d430-abhinav", stockRecord.getStockSymbol());
+		    ResponseEntity<SimulatedPrice> simulatedPriceResponse = getSimulatedPriceClient.getSimulatedPrice(API_KEY, stockRecord.getStockSymbol());
 			
 		    log.info("Total attempts: {}, Remaining attempts: {} for getStockPrice API call", simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Limit"), simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));
 		    counter = Integer.parseInt(simulatedPriceResponse.getHeaders().getFirst("X-Ratelimit-Remaining"));

@@ -12,4 +12,5 @@ public interface StocksRepository extends CrudRepository<StocksData, Integer> {
     
 
     List<StocksData> findByPrice(String price);
+    
 }

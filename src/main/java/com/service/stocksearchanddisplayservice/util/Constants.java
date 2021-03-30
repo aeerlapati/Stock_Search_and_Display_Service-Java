@@ -3,7 +3,6 @@ package com.service.stocksearchanddisplayservice.util;
 public final class Constants {
 
     public static final String CLIENT_URI = "https://hiring-project-307416.uk.r.appspot.com";
-    public static final String API_KEY = "api-key";
     public static final String PATH_VARIABLE_SYMBOL = "symbol";
 
 
@@ -22,6 +21,6 @@ public final class Constants {
     public static final String ERROR_CODE = "-1";
     public static final String ERROR_DETAILS = "Exception occured in deserializing Stock Service response";
     public static final String LOCATION = "Stock Seach & Display Service";
-    //public static final String API_KEY = "api-key";
     
+    public static final String API_KEY = "fbd082f1d430-abhinav";
 }
