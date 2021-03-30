@@ -14,51 +14,43 @@ import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceServic
 import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
 
 @Component
-public class ScheduledTasks 
-{
+public class ScheduledTasks {
 
 	@Autowired
-    GetValidStockSymbolsService getValidStockSymbolsService;
-	
+	GetValidStockSymbolsService getValidStockSymbolsService;
+
 	@Autowired
 	GetSimulatedPriceService getSimulatedPriceService;
-	
+
 	@Autowired
 	GetFiancialDataService financialDataService;
-	
+
 	boolean fetchFlag = true;
-	
-	public Iterable<StocksData> fetchStockSymbolsJob() throws ServiceException
-    {
+
+	public Iterable<StocksData> fetchStockSymbolsJob() throws ServiceException {
 		Iterable<StocksData> stockSymbolsData = getValidStockSymbolsService.getValidStockSymbols();
 		return stockSymbolsData;
-    }
-	
-	@Scheduled(fixedDelay = 30000)
-	public void updateStockPricesJob() throws InterruptedException, Exception
-	{
-		if(fetchFlag)
-		{
+	}
+
+	@Scheduled(fixedDelay = 45000)
+	public void updateStockPricesJob() throws InterruptedException, Exception {
+		if (fetchFlag) {
 			Iterable<StocksData> stockSymbolsData = fetchStockSymbolsJob();
-			if(Objects.nonNull(stockSymbolsData) && Iterables.size(stockSymbolsData) > 0)
-			{
+			if (Objects.nonNull(stockSymbolsData) && Iterables.size(stockSymbolsData) > 0) {
 				fetchFlag = false;
-			}
-			else
-			{
+			} else {
 				fetchFlag = true;
 			}
-			
+
 		}
 		getSimulatedPriceService.updateSimulatedPrices();
-		
+
 	}
-	
-	/*
-	 * @Scheduled(fixedDelay = 60000) public void updateStockFinancialInfoJob()
-	 * throws InterruptedException, Exception {
-	 * 
-	 * financialDataService.getFinancialData(); }
-	 */
-	
+
+	@Scheduled(initialDelay = 5000, fixedDelay = 60000)
+	public void updateStockFinancialInfoJob() throws InterruptedException, Exception {
+
+		financialDataService.getFinancialData();
+	}
+
 }

@@ -4,6 +4,7 @@ import static com.service.stocksearchanddisplayservice.util.Constants.API_KEY;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public class GetSimulatedPriceService
     public void updateSimulatedPrices() throws InterruptedException, Exception 
     {
     	log.info(LogMarker.SERVICE_ENTRY.getMarker(), "updateSimulatedPrices: call started at time: {}",  dateFormat.format(new Date()));
-    	log.info("The time is now {}", dateFormat.format(new Date()));
+    	//log.info("The time is now {}", dateFormat.format(new Date()));
         StocksData stocksInDB = new StocksData();
         int counter = -1;
         try
@@ -69,6 +70,7 @@ public class GetSimulatedPriceService
                 if(Objects.nonNull(queryStocksIterable))
                 {
                 	queryStocksIterable.forEach(stocksList::add);
+                	Collections.sort(stocksList, (s1, s2) -> s1.getPriceUpdatedTime().compareTo(s2.getPriceUpdatedTime()));
                     updateStockInfo(stocksInDB, counter, stocksList, true);
                 }	
                 log.info(LogMarker.SERVICE_EXIT.getMarker(), "updateSimulatedPrices: call ended");
@@ -79,7 +81,7 @@ public class GetSimulatedPriceService
         	log.info(LogMarker.SERVICE_ERROR.getMarker(), "updateSimulatedPrices: call ended with exception : {}", e.getMessage());
         	//RetryableException retryableException = (RetryableException)e;
         	//System.out.println("Retry after value:" + retryableException..getFirst("Retry-After"));
-        	Thread.sleep(20000);
+        	//Thread.sleep(20000);
         	//throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "Failed to refresh stock prices", LOCATION, ""), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -92,9 +94,10 @@ public class GetSimulatedPriceService
 
 		  if(counter == 0)
 		  {
-			log.info("Sleep started at: {} ", dateFormat.format(new Date()));
-		    Thread.sleep(40000);
-		    log.info("Sleep ended at: {} ", dateFormat.format(new Date()));
+			//log.info("Sleep started at: {} ", dateFormat.format(new Date()));
+		    break;
+			//Thread.sleep(40000);
+		    //log.info("Sleep ended at: {} ", dateFormat.format(new Date()));
 		  } 
 
 		    ResponseEntity<SimulatedPrice> simulatedPriceResponse = getSimulatedPriceClient.getSimulatedPrice(API_KEY, stockRecord.getStockSymbol());
@@ -109,7 +112,7 @@ public class GetSimulatedPriceService
 		        stocksInDB.setPrice(simulatedPriceResponse.getBody().getPrice());
 		        stocksInDB.setStockName(stockRecord.getStockName());
 		        stocksInDB.setStockSymbol(stockRecord.getStockSymbol());
-      
+		        stocksInDB.setPriceUpdatedTime(StocksData.newDate()); 
 		        stocksRepository.save(stocksInDB);
 		        
 		        if(updateFlag)
@@ -120,8 +123,6 @@ public class GetSimulatedPriceService
 		        {
 		        	log.info("price: {} for symbol: {} has been saved in db for first time", stocksInDB.getPrice(), stocksInDB.getStockSymbol());
 		        }	
-		        
-		        stocksInDB = new StocksData();
 		    }
 
 		}

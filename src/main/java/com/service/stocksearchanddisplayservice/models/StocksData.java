@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,22 +32,27 @@ public class StocksData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(value = "id")
 	Integer Id;
     
     @Column(name = "STOCK_NAME")
-    @JsonProperty("stockname")
+    @JsonProperty("stockName")
+    @ApiModelProperty(value = "stockName")
     String stockName;
 	
     @Column(name = "STOCK_SYMBOL")
-    @JsonProperty("stocksymbol")
+    @JsonProperty("stockSymbol")
+    @ApiModelProperty(value = "stockSymbol")
     String stockSymbol;
 	
     @Column(name = "PRICE")
-    @JsonProperty("stockprice")
+    @JsonProperty("stockPrice")
+    @ApiModelProperty(value = "stockPrice")
     String price;
 
     @Column(name = "PRICE_UPDATED_TIME")
-    @JsonProperty("priceupdatedtime")
+    @JsonProperty("priceUpdatedTime")
+    @ApiModelProperty(value = "priceUpdatedTime")
     @Temporal(TemporalType.TIMESTAMP)
     Date priceUpdatedTime;
     
@@ -67,4 +73,5 @@ public class StocksData {
     	TimeZone.setDefault(TimeZone.getTimeZone("US/Arizona"));
     	return Calendar.getInstance(TimeZone.getTimeZone("US/Arizona")).getTime();
     }
+
 }

@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,45 +27,44 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "STOCKFINANCEDATA")
+@Table(name = "STOCKS_FINANCE_DATA")
 public class FinanceDataDBObject {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer Id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(value = "Id")
+	Integer Id;
 
-    @Column(name = "STOCK_SYMBOL")
-    @JsonProperty("stockSymbol")
-    private String stockSymbol;
+	@Column(name = "STOCK_SYMBOL")
+	@JsonProperty("stockSymbol")
+	@ApiModelProperty(value = "stockSymbol")
+	private String stockSymbol;
+	
+	@Column(name = "STOCK_UPDATED_TIME")
+	@JsonProperty("stockUpdatedTime")
+	@ApiModelProperty(value = "stockUpdatedTime")
+	@Temporal(TemporalType.TIMESTAMP)
+	Date stockUpdatedTime;
+	
+	@Lob
+	@Column(name = "FINANCE_INFO_PAYLOAD")
+	@ApiModelProperty(value = "financeInfoPayload")
+	private String financeInfoPayload;
 
-    @Lob
-    @Column(name = "FINANCE_DATA_PAYLOAD")
-    private String financeInfoPayload;
+	@PrePersist
+	protected void onCreate() {
+		stockUpdatedTime = new Date();
+	}
 
-    @Column(name = "FINANCE_PAYLOAD_UPDATED")
-    private String financeInfoSavedFlag;
-    
-    @Column(name = "PRICE_UPDATED_TIME")
-    @JsonProperty("priceupdatedtime")
-    @Temporal(TemporalType.TIMESTAMP)
-    Date priceUpdatedTime;
-    
-    @PrePersist
-    protected void onCreate()
-    {
-    	priceUpdatedTime = new Date();
-    }
-    
-    @PreUpdate
-    protected void onUpdate()
-    {
-    	priceUpdatedTime = newDate();
-    }
-    
-    public static Date newDate()
-    {
-    	TimeZone.setDefault(TimeZone.getTimeZone("US/Arizona"));
-    	return Calendar.getInstance(TimeZone.getTimeZone("US/Arizona")).getTime();
-    }
+	@PreUpdate protected void onUpdate() 
+	{ 
+		stockUpdatedTime = new Date();
+	}
+	  //stockUpdatedTime = newDate(); }
 
+	public static Date newDate() {
+		TimeZone.setDefault(TimeZone.getTimeZone("US/Arizona"));
+		return Calendar.getInstance(TimeZone.getTimeZone("US/Arizona")).getTime();
+	}
+	
 }

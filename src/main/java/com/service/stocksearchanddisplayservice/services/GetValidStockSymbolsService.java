@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Iterables;
@@ -18,6 +19,7 @@ import com.service.stocksearchanddisplayservice.models.StockSymbols;
 import com.service.stocksearchanddisplayservice.models.StocksData;
 import com.service.stocksearchanddisplayservice.repository.StocksRepository;
 import com.service.stocksearchanddisplayservice.util.LogMarker;
+import com.service.stocksearchanddisplayservice.util.Utility;
 
 @Service
 public class GetValidStockSymbolsService 
@@ -53,9 +55,8 @@ public class GetValidStockSymbolsService
         catch(Exception e)
         {
         	log.info(LogMarker.SERVICE_ERROR.getMarker(), "getValidStockSymbols: call ended with error: {}", e.getMessage()); ;
-            //throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "", "Stocks Information is currently unavailable, please try after some time", ""), HttpStatus.EXPECTATION_FAILED);
+            throw new ServiceException(Utility.buildErrorResponse("ERROR", "-1", "", "Stocks Information is currently unavailable, please try after some time", ""), HttpStatus.EXPECTATION_FAILED);
         }
-		return null;
     }
     
     public Iterable<StocksData> getValidStockSymbols() throws ServiceException 
@@ -70,17 +71,16 @@ public class GetValidStockSymbolsService
             if(allStocks == null || Iterables.size(allStocks) == 0)
             {
                 stockSymbolsResponse = getSymbolsClient.stockSymbolsClient(API_KEY);
-                StocksData stockData = new StocksData();
+                StocksData stockData = null; 
     
                 for(StockSymbols stockrecord: stockSymbolsResponse)
                 {
+                	stockData = new StocksData();
                     stockData.setStockName(stockrecord.getName());
                     stockData.setStockSymbol(stockrecord.getSymbol());
                     stockData.setPrice("NA");
-
+                    stockData.setPriceUpdatedTime(StocksData.newDate());
                     stocksRepository.save(stockData);
-        
-                    stockData = new StocksData();
                 }
 
                  allStocks =  stocksRepository.findAll();

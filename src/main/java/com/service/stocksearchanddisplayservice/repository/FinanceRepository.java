@@ -12,5 +12,5 @@ public interface FinanceRepository extends CrudRepository<FinanceDataDBObject, I
 
     List<FinanceDataDBObject> findByStockSymbol(String stockSymbol);
     
-    List<FinanceDataDBObject> findByFinanceInfoSavedFlag(String savedFlag);
+    List<FinanceDataDBObject> findByFinanceInfoPayload(String financeInfoPayload);
 }
