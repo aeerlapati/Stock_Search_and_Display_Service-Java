@@ -32,7 +32,7 @@ public class ScheduledTasks {
 		return stockSymbolsData;
 	}
 
-	@Scheduled(fixedDelay = 50000)
+	@Scheduled(fixedDelay = 70000)
 	public void updateStockPricesJob() throws InterruptedException, Exception {
 		if (fetchFlag) {
 			Iterable<StocksData> stockSymbolsData = fetchStockSymbolsJob();
