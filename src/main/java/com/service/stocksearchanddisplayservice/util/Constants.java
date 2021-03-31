@@ -2,6 +2,11 @@ package com.service.stocksearchanddisplayservice.util;
 
 public final class Constants {
 
+	private Constants()
+	{
+		
+	}
+	
     public static final String CLIENT_URI = "https://hiring-project-307416.uk.r.appspot.com";
     public static final String PATH_VARIABLE_SYMBOL = "symbol";
 

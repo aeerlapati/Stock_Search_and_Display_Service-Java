@@ -1,6 +1,5 @@
-package com.service.stocksearchanddisplayservice;
+package com.service.stocksearchanddisplayservice.services.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -8,9 +7,20 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.service.stocksearchanddisplayservice.client.GetFinancialDataClient;
 import com.service.stocksearchanddisplayservice.client.GetSimulatedPriceClient;
-import com.service.stocksearchanddisplayservice.exception.ServiceException;
 import com.service.stocksearchanddisplayservice.models.FinanceDataDBObject;
 import com.service.stocksearchanddisplayservice.models.FinancialData;
 import com.service.stocksearchanddisplayservice.models.SimulatedPrice;
@@ -21,18 +31,8 @@ import com.service.stocksearchanddisplayservice.services.GetFinancialDataService
 import com.service.stocksearchanddisplayservice.services.GetSimulatedPriceService;
 import com.service.stocksearchanddisplayservice.services.GetValidStockSymbolsService;
 
-import org.assertj.core.util.Arrays;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
-
 @SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
 @TestPropertySource(properties = "app.scheduling.enable=false")
 public class GetSimulatedPriceServiceTest {
@@ -140,129 +140,49 @@ public class GetSimulatedPriceServiceTest {
 
     }
 
-     private void prepareFinanceStubbesData() {
-        
-         FinanceDataDBObject dummyObject = new FinanceDataDBObject();
-
-         dummyObject.setId(1);
-         dummyObject.setStockSymbol("AAPL");
-         dummyObject.setStockUpdatedTime(FinanceDataDBObject.newDate());
-         dummyObject.setFinanceInfoPayload("NA");
-
-         stubbedFinanceData.add(dummyObject);
-     }
-
-     private Iterable<FinanceDataDBObject> prepareFinanceDataIterable() {
-        
-        FinanceDataDBObject dummyObject = new FinanceDataDBObject();
-
-        dummyObject.setId(1);
-        dummyObject.setStockSymbol("AAPL");
-        dummyObject.setStockUpdatedTime(FinanceDataDBObject.newDate());
-        dummyObject.setFinanceInfoPayload("NA");
-
-        stubbedFinanceData.add(dummyObject);
-
-        Iterable<FinanceDataDBObject> returnVal =   Iterable.class.cast(stubbedFinanceData);
-        
-        //(Iterable<FinanceDataDBObject>) Arrays.asList(stubbedFinanceData).iterator();
-        return returnVal;
-
-    }
-
 
     private Iterable<StocksData> prepareStocksDataIterable() {
         
-        StocksData dummyObject = new StocksData();
+        StocksData stocksDataObj = new StocksData();
 
-        dummyObject.setId(1);
-        dummyObject.setStockSymbol("AAPL");
-        dummyObject.setPriceUpdatedTime(StocksData.newDate());
-        dummyObject.setStockName("Apple");
-        dummyObject.setPrice("100");
+        stocksDataObj.setId(1);
+        stocksDataObj.setStockSymbol("AAPL");
+        stocksDataObj.setPriceUpdatedTime(StocksData.newDate());
+        stocksDataObj.setStockName("Apple");
+        stocksDataObj.setPrice("100");
 
-        stubbedStocksData.add(dummyObject);
+        stubbedStocksData.add(stocksDataObj);
 
         Iterable<StocksData> returnVal = Iterable.class.cast(stubbedStocksData);
         return returnVal;
 
     }
 
-
-    private StocksData prepareStocksStubbedData() {
-        
-        StocksData dummyObject = new StocksData();
-
-        dummyObject.setId(1);
-        dummyObject.setStockSymbol("AAPL");
-        dummyObject.setPriceUpdatedTime(StocksData.newDate());
-        dummyObject.setStockName("Apple");
-        dummyObject.setPrice("100");
-
-        return dummyObject;
-    }
-
     private StocksData prepareStocksStubbedDataWithNA() {
         
-        StocksData dummyObject = new StocksData();
+        StocksData stocksDataObj = new StocksData();
 
-        dummyObject.setId(1);
-        dummyObject.setStockSymbol("AAPL");
-        dummyObject.setPriceUpdatedTime(StocksData.newDate());
-        dummyObject.setStockName("Apple");
-        dummyObject.setPrice("NA");
+        stocksDataObj.setId(1);
+        stocksDataObj.setStockSymbol("AAPL");
+        stocksDataObj.setPriceUpdatedTime(StocksData.newDate());
+        stocksDataObj.setStockName("Apple");
+        stocksDataObj.setPrice("NA");
 
-        stubbedStocksDataPriceNA.add(dummyObject);
-        return dummyObject;
-    }
-
-
-    private FinanceDataDBObject prepareFinanaceStubbedDataObject() {
-        
-        FinanceDataDBObject dummyObject = new FinanceDataDBObject();
-
-        dummyObject.setId(1);
-        dummyObject.setStockSymbol("AAPL");
-        dummyObject.setStockUpdatedTime(FinanceDataDBObject.newDate());
-        dummyObject.setFinanceInfoPayload("NA");
-
-        return dummyObject;
-    }
-
-
-    private void prepeareFinancialDataStub() {
-        
-        FinancialData dummyObject = new FinancialData();
-
-        dummyObject.setCaptial_expenditure("123");
-        dummyObject.setRevenue("123");
-        dummyObject.setCurrency("USD");
-        dummyObject.setDate("NA");
-        dummyObject.setEbitda("123");
-        dummyObject.setEpsl("777");
-        dummyObject.setFree_cash_flow("123");
-        dummyObject.setGross_profit("736");
-        dummyObject.setLong_term_debt("111");
-        dummyObject.setNet_income("914");
-        dummyObject.setSec_link("https://www.google.com");
-        dummyObject.setIncome_before_tax("98");
-        dummyObject.setRevenue("1986");
-        dummyObject.setWeighted_shares_outstanding("32");
-
-        stubbedFinancialData.add(dummyObject);
+        stubbedStocksDataPriceNA.add(stocksDataObj);
+        return stocksDataObj;
     }
 
 
     private SimulatedPrice prepareSimulatedPriceDataStub() {
         
-        SimulatedPrice dummyObject = new SimulatedPrice();
+        SimulatedPrice simulateddPrice = new SimulatedPrice();
 
-        dummyObject.setPrice("123");
-        dummyObject.setSymbol("AAPL");
+        simulateddPrice.setPrice("123");
+        simulateddPrice.setSymbol("AAPL");
 
-        stubbedSimulatedPriceObj.add(dummyObject);
+        stubbedSimulatedPriceObj.add(simulateddPrice);
 
-        return dummyObject;
+        return simulateddPrice;
     }
 
 }
